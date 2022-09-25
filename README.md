@@ -1,3 +1,4 @@
+![Django Introduction Banner](documentation/django-introduction-banner.png)
 # Django Introduction
 
 A walkthrough project from the Code Institute for the level 5 diploma in web application development - Introduction to Django.
