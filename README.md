@@ -23,6 +23,8 @@ A walkthrough project from the Code Institute for the level 5 diploma in web app
     * `.github/`
     * `cloudinary_python.txt`
 
+---
+
 ### Virtual Environments and installing Django
 
 For this project I will be using pipenv to create a virtual environment and to install packages.
@@ -42,6 +44,8 @@ pipenv shell
 
 Once this is complete you will see that there are files and folders in the .venv file and a `pipfile` and `pipfile.lock` in the root. The pipfile is similar to requirements.txt, it lists all the packages installed. You should not make any changes in `pipfile.lock` as this can cause errors.
 
+---
+
 ### Creating a Django project
 
 Django comes with a built in admin command we can use to create our project:
@@ -59,6 +63,8 @@ This will then create two new items, the project directory folder `django_todo` 
 * `urls.py` - contains the routing information which allows a user to type a specific URL into their address bar and hit a specific python function (similar to app.route in flask)
 * `wsgi.py` - contains the code that allows the web server to communicate with the python application
 
+---
+
 ### Running the project
 
 We can run the project using  `manage.py`:
@@ -70,4 +76,39 @@ python3 manage.py runserver
 There will be a link in the terminal for the development server. To open it hold `command` + click. A brower tab will open and you should see a message letting you know the install was successful.
 
 When you run the project 2 files will be created, a ``__pycache__`` file will be created in the ``.venv -> bin`` folder, and a ``db.sqlite3`` file will be created in the root.
+
 ---
+
+### Creating an app
+
+Django projects are organised into small components called apps. An app is a reuable self-contained collection of code, which allows it to be passed to other projects to speed up developement time. Rather than creating your own authentication system, you can use a Django app and install it into your project. Apps are an integral part of Django and are created using the following command:
+
+``` bash
+python3 manage.py startapp APP_NAME
+```
+
+---
+
+### Setting up the Database & Migrations
+
+Migrations are Django's was of converting python code into database operations. So when you need to make changes to a database connected to a Django project, instead of running the SQL commands (or any other type of database language) Django will do this for you and all we need to do is write the python code.
+
+When we first create a project, Django will remind us in the terminal that there are unapplied migrations - it is telling us that we have not done the initial set-up of the database.
+
+To check what migrations are required without creating the migration: 
+
+``` bash
+python3 manage.py makemigrations --dry-run
+```
+
+To show all migrations in a project that need to be applied (this includes built-in apps such as authentication and admin):
+
+``` bash
+python3 manage.py showmigrations
+```
+
+To run a migration (this tells Django to convert the python code to SQL to execute on the database):
+
+``` bash
+python3 manage.py makemigrations
+```
