@@ -89,26 +89,42 @@ python3 manage.py startapp APP_NAME
 
 ---
 
-### Setting up the Database & Migrations
+### Setting up the Database & Migration commands
 
 Migrations are Django's was of converting python code into database operations. So when you need to make changes to a database connected to a Django project, instead of running the SQL commands (or any other type of database language) Django will do this for you and all we need to do is write the python code.
 
 When we first create a project, Django will remind us in the terminal that there are unapplied migrations - it is telling us that we have not done the initial set-up of the database.
 
-To check what migrations are required without creating the migration: 
+* Using the `--dry-run` flag to check what migrations are required without creating the migration: 
 
-``` bash
-python3 manage.py makemigrations --dry-run
-```
+  ``` bash
+  python3 manage.py makemigrations --dry-run
+  ```
 
-To show all migrations in a project that need to be applied (this includes built-in apps such as authentication and admin):
+* To show all migrations in a project that need to be applied (this includes built-in apps such as authentication and admin. By applying these migrations we will set up the database and it will then allow us to create an admin user that we can use to manage it):
 
-``` bash
-python3 manage.py showmigrations
-```
+  ``` bash
+  python3 manage.py showmigrations
+  ```
 
-To run a migration (this tells Django to convert the python code to SQL to execute on the database):
+* Using the `--plan` flag on migrate to see what the migration will do:
 
-``` bash
-python3 manage.py makemigrations
-```
+  ``` bash
+  python3 manage.py migrate --plan
+  ```
+
+* To run a migration(this tells Django to convert the python code to SQL to execute on the database):
+
+  ``` bash
+  python3 manage.py migrate
+  ```
+
+*  Creating the admin superuser -This is used to log in and look at the tables in the database, and make changes to them if needed: 
+
+  ```
+  python3 manage.py createsuperuser
+  ```
+
+  This command will then prompt you to enter a username, an email and a password.
+
+  To log in with this admin superuser credential we need to run the project and then navigate to /admin in the browser. Once logged in we should be able to see authentication and authorisation app and the two tables created inside that app (Groups and Users). You should be able to find the superuser in the users table.
