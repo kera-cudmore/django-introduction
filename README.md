@@ -128,3 +128,21 @@ When we first create a project, Django will remind us in the terminal that there
   This command will then prompt you to enter a username, an email and a password.
 
   To log in with this admin superuser credential we need to run the project and then navigate to /admin in the browser. Once logged in we should be able to see authentication and authorisation app and the two tables created inside that app (Groups and Users). You should be able to find the superuser in the users table.
+
+  ### Models
+
+The models are what define the database schema. They are how we define the table headings.
+
+Class inheritance is very important - it means we can pull in the functionality from one class to another by using class inheritance.
+
+If we want to create a table with the fields id, name and status - we don't need to worry about the id field as Django will create this for us automatically.
+
+To create the table in the database we will need to use the command below to create a migrations file:
+
+`python3 manage.py makemigrations`
+
+(It would be a good idea to check what is going to migrate using the `--dry-run` flag if you are not confident on what the migration will do). Django will then create a new python file in migrations folder which contains the code on how to create the database table based on the model. Django will convert this code to SQL and executed on the database when we run the migration.
+
+We can use the `python3 manage.py showmigrations` command to see what migrations are unapplied - to run then we just need to run `python3 manage.py migrate` (again we can use the `--plan` flag if we want to double check what the planned migrations are before running the migration).
+
+We won't be able to see these items in the admin until we expose them. We can do that by registering our model in the todo apps admin.py file.
