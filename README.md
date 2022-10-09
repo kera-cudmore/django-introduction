@@ -145,4 +145,32 @@ To create the table in the database we will need to use the command below to cre
 
 We can use the `python3 manage.py showmigrations` command to see what migrations are unapplied - to run then we just need to run `python3 manage.py migrate` (again we can use the `--plan` flag if we want to double check what the planned migrations are before running the migration).
 
-We won't be able to see these items in the admin until we expose them. We can do that by registering our model in the todo apps admin.py file.
+We won't be able to see these items in the admin until we expose them. We can do that by registering our model in the todo apps admin.py file. First we will import the Item from the .models and then we can use the admin.site.register function to register the model.
+
+The Items will then appear in the todo section of the administration panel. We can then click this and it will take us to the page where we can add items - click the add items button and then fill in the form. The items will then be created and display in a list on the items page. 
+
+To make the items have a nicer display name (currently the items are using the built-in string from the base models class which displays the class name followed by the word object) we need to override this method with our own by redefining the string in our own class.
+
+### Displaying information from the database in a template
+
+In the model, view template design pattern - the models create the tables in the database and the views allow the users to interact with the information in the database through the templates.
+
+So in order to allow the users to be able to interact with the information in the database we will need to import the Item model and this will allow us to use the item model in the views. 
+
+We can then create a variable in the function which will hold a query set of all the items in the database. Finally we can create another variable which will be a dictionary with all our items in it. This variable will be added to the render function as the third argument to allow us access to it.
+
+Django is very similar to jinja - we can display using a template variable `{{ }}` (this can be used for almost all the things you can use in python) and we can use `{% %}` for functionality such as for loops to iterate through lists etc.
+
+We can also add a message to display if the database is empty using `{% empty %}` before our closing `{% endif %}` This will display whatever is placed in the code if the database is empty.
+
+### Creating a new template
+
+When creating a new template we need to make sure that we add this to the views.py by creating a new function for the template. This enables us to be able to render the template in the browser. We will also need to add it to the url patterns in urls.py which will give us a url to the page (make sure to also import it in the views import section).
+
+when creating links to other templates in Django we use the name we assign in the path.
+
+### Form POST & CSRF Tokens
+
+Whenever we use the POST method on a form in Django we need to add a cross-site request forgery token (CSRF)  - `{% csrf_token %}` - just after the opening form tag. This token is a randomly generated unique value that is added to the form as a hidden input field when the form is submitted. Its purpose is to ensure the data that is being posted is coming from our app and not some other website.
+
+If this is omitted from the form, Django will throw an error on submission as it won't be able to guarantee that the post data is coming from the correct source.
