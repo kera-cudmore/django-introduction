@@ -3,6 +3,20 @@
 
 A walkthrough project from the Code Institute for the level 5 diploma in web application development - Introduction to Django.
 
+* [Initial Setup of the project](#initial-setup-of-the-project)
+  * [Using VSCode](#using-vscode)
+  * [Virtual Environments and installing Django](#virtual-environments-and-installing-django)
+  * [Creating a Django project](#creating-a-django-project)
+  * [Running the project](#running-the-project)
+  * [Creating an app](#creating-an-app)
+  * [Setting up the Database & Migration commands](#setting-up-the-database--migration-commands)
+  * [Models](#models)
+  * [Displaying information from the database in a template](#displaying-information-from-the-database-in-a-template)
+  * [Creating a new template](#creating-a-new-template)
+  * [Form POST & CSRF Tokens](#form-post--csrf-tokens)
+* [Django Testing](#django-testing)
+* []
+
 ## Initial Setup of the project
 ### Using VSCode
 
@@ -174,3 +188,129 @@ when creating links to other templates in Django we use the name we assign in th
 Whenever we use the POST method on a form in Django we need to add a cross-site request forgery token (CSRF)  - `{% csrf_token %}` - just after the opening form tag. This token is a randomly generated unique value that is added to the form as a hidden input field when the form is submitted. Its purpose is to ensure the data that is being posted is coming from our app and not some other website.
 
 If this is omitted from the form, Django will throw an error on submission as it won't be able to guarantee that the post data is coming from the correct source.
+
+---
+
+## Django Testing
+
+When we create an app, Django will automatically create a `tests.py` file which imports the class TestCase from django.test. This class is an extension of the Python standard library module called unit tests and will provide us with a bunch of methods to assert various things about our code (such as assert equal, assert true, assert false etc).
+
+We need to create a class called TestDjango which will inherit the built-in test case class, this will give us access to all its functionality. Within this class every new test will be defined as a method that begins with the word test. We pass in self as a parameter (self refers to the TestDjango class, because it inherits the TestCase class we'll have a selection of pre-built methods and functionalities that we will be able to use, like assertEqual.) Make sure the test name is something that makes it easy to see what the issue is if the test fails.
+
+To perform the test we can run the following command in the terminal:
+
+``` bash
+python3 manage.py test
+```
+
+The image below shows the output for a failed test (the test was checking if 0 was equal to 1). 
+
+At the top is an `F` which tells us this test failed. Beneath that it will tell us which test failed and why. At the bottom is a summary letting us know how many tests were run, how long it took and how many failures there were.
+
+![Testing Fail](documentation/testing-terminal-fail.png)
+
+The image below shows the output for a passing test (it will be shown as a `.`), and a test containing an error (shown as an `E`).
+
+![Testing Pass and Error](documentation/testing-terminal-pass-error.png)
+
+We can seperate our testing logic, which will make it more organised and easier to manage, as well as allowing us to make our tests more independent of one another. We do this by renaming the `tests.py` file to `test_views.py`. We can then use this file to run all our views testing. We can also create a file to test our models (`test_models.py`), and our forms (`test_forms.py`).
+
+We can also be specific about which tests are run (as by default Django will try to run all tests). We do this by adding the app and test file at the end:
+
+``` bash
+python3 manage.py test todo.test_forms
+```
+
+We can also add a specific class to the end of the test command if we only want to run a specific test:
+
+``` bash
+python3 manage.py test todo.test_forms.TestItemForm
+```
+
+or even a specific test by adding the test name onto the end of the test command:
+
+``` bash
+python3 manage.py test todo.test_forms.TestItemForm.test_fields_are_explicit_in_form_metaclass
+```
+
+### Coverage
+
+To find out how much of our code we have tested we can use a tool called coverage. To install:
+
+```bash
+pipenv install coverage
+```
+
+To run:
+
+``` bash
+coverage run --source=todo manage.py test
+```
+
+To view the report:
+
+```bash
+coverage report
+```
+
+This will create a report that gives us a percentage of the code that has been covered by testing. To see the parts that we are missing, we can create an interactive HTML report:
+
+```bash
+coverage html
+```
+
+By running this command we will have created a new folder in our project called `htmlcov`. Inside it is an index.html file - to view this we can use the following command (otherwise Django will try looking for it with a URL that doesn't exist):
+
+```bash
+python3 -m http.server
+```
+
+We will then need to open the htmlcov folder which will automatically open the index.html page. This will then display an interactive report that we can click on to get further information.
+
+NOTE: 100% coverage does not mean that all tests have passed - make sure to keep an eye on the results when testing.
+
+It is unlikely to always reach 100% Total coverage, as there are files that are generated by Django that we should not adjust. We just need to make sure we are testing our own code.
+
+## Deploying to Heroku
+
+### Updating the Database
+
+While in deployment we have been using a development database, but this can't be used with Heroku. We will therefore need to use an add-on for heroku to allow us to use a Postgres database. We want to use postgres as it is a server based database which is preferable to herokus database which is ephemeral file system (this means it is wiped and rebuilt). By using a server based database it will survive even if the application server is destroyed.
+
+To use postgres we need to install the package psycopg2 using the following command:
+
+``` bash
+pipenv install psycopg2-binary
+```
+
+We will also need a package called gunicorn (also known as green unicorn). This will replace our development server once the app is deployed to Heroku. It will act as our web server. To install:
+
+```bash
+pipenv install gunicorn
+```
+
+Note: When we use pipenv the dependencies are automatically updated in our pipfile, so we don't need to create a requirements.txt file, as the pipfile does the same thing.
+
+### Using the postgres add-on in heroku
+
+Go to resources tab in the app and search for postgres. Leave the hobby Dev selected and then complete order. If we then go into the settings and click the reveal config vars button we can see a URL for the postgres database has been created for us to use to connect our app to.
+
+### Setting the Django app up
+
+We will need to install a package called dj-database-url to connect to our remote database:
+
+```bash
+pipenv install dj_database_url
+```
+
+This package allows us to parse the the database URL heroku created and get all the connection information out of it.
+
+We can get the URL from settings on heroku or we can use the terminal - `heroku config` this allows us to get, edit, set and unset environment variables for our apps.
+
+Open settings.py and import dj_database_url so that we can use it. Then look for the databases setting. Copy it and paste it underneath, then comment out the original one. We then want to delete everything after default and replace it with `dj_database_url.parse()` we will then copy and paste the database URL into the parentheses.
+
+Next we will need to run migrations to get the database set up using the models etc we already have.
+
+```bash
+python3 manage.py migrate
+```
