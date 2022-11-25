@@ -273,6 +273,10 @@ It is unlikely to always reach 100% Total coverage, as there are files that are 
 
 ## Deploying to Heroku
 
+**NOTE** 
+
+This section needs updating to use ElephantSQL rather than postgres add-on in heroku
+
 ### Updating the Database
 
 While in deployment we have been using a development database, but this can't be used with Heroku. We will therefore need to use an add-on for heroku to allow us to use a Postgres database. We want to use postgres as it is a server based database which is preferable to herokus database which is ephemeral file system (this means it is wiped and rebuilt). By using a server based database it will survive even if the application server is destroyed.
